@@ -58,12 +58,9 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     }
 
     @Override
-    public Boolean isValidUrl(final String url) {
-        return null;
-    }
-
-    @Override
-    public Boolean deleteShortUrl(final String url) {
-        return null;
+    public void deleteShortUrl(final String shortUrlCode) {
+        final String shortUrl = SHORTENED_URL_BASE.concat(shortUrlCode);
+        final Url url = urlShortenerRepository.findByShortUrl(shortUrl);
+        urlShortenerRepository.delete(url);
     }
 }

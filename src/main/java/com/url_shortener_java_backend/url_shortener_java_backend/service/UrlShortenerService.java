@@ -12,7 +12,5 @@ public interface UrlShortenerService {
 
     public UrlResponseDto getOriginalUrl(final String shortUrlCode) throws Exception;
 
-    public Boolean isValidUrl(final String url);
-
-    public Boolean deleteShortUrl(final String url);
+    public void deleteShortUrl(final String shortUrlCode);
 }

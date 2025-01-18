@@ -59,7 +59,7 @@ public class UrlShortenerController {
         ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
-        if (StringUtils.isEmpty(shortUrlCode)) {
+        if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
             final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
                     .errorMessage("No url provided")
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
@@ -92,5 +92,35 @@ public class UrlShortenerController {
                 return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+    }
+
+    @DeleteMapping("{shortUrlCode}")
+    public ResponseEntity<?> deleteShortUrl(@PathVariable String shortUrlCode) {
+        ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
+        final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
+
+        if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
+            final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                    .errorMessage("No url provided")
+                    .errorCode(HttpStatus.BAD_REQUEST.toString())
+                    .build();
+            restResponse.setErrorData(errorResponseData);
+            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                urlShortenerService.deleteShortUrl(shortUrlCode);
+                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+            } catch (final Exception e) {
+                final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                        .errorMessage("Failed to delete url")
+                        .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                        .details(e.getMessage())
+                        .build();
+                restResponse.setStatus("failure");
+                restResponse.setErrorData(errorResponseData);
+                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return responseEntity;
     }
 }
