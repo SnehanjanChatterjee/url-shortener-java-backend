@@ -53,7 +53,9 @@ public class UrlShortenerController {
     }
 
     @GetMapping("{shortUrlCode}")
-    public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode, HttpServletResponse response) {
+    public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode,
+                                            HttpServletResponse response,
+                                            @RequestHeader(value = "Accept", required = false) String acceptHeader) {
         ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
@@ -68,8 +70,17 @@ public class UrlShortenerController {
             try {
                 final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode);
                 restResponse.setResult(urlResponseDto);
-                response.sendRedirect(urlResponseDto.getOriginalUrl());
-                return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.CREATED);
+
+                // Check if the client accepts HTML (browser request)
+                if (acceptHeader != null && acceptHeader.contains("text/html")) {
+                    // Redirect the browser
+                    response.sendRedirect(urlResponseDto.getOriginalUrl());
+                    return null; // No further response needed, as the redirection is handled
+                } else {
+                    // For API clients (e.g., Postman), return the URL in JSON format
+                    return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+                }
+
             } catch (final Exception e) {
                 final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
                         .errorMessage("Failed to fetch original url")
