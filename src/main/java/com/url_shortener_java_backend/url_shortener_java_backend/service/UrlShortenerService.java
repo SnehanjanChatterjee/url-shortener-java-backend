@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public interface UrlShortenerService {
     public UrlResponseDto generateAndPersistShortUrl(@NonNull final UrlRequestDto url);
 
-    public Url getShortUrl(final String url);
+    public UrlResponseDto getOriginalUrl(final String shortUrlCode) throws Exception;
 
     public Boolean isValidUrl(final String url);
 

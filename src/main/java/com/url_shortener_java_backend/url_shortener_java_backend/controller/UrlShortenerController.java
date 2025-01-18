@@ -5,13 +5,13 @@ import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestRespons
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlRequestDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.service.UrlShortenerService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/v1.0/rest/url-shortener")
@@ -31,12 +31,12 @@ public class UrlShortenerController {
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
                     .build();
             restResponse.setErrorData(errorResponseData);
-            responseEntity = new ResponseEntity<>(restResponse, HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
         } else {
             try {
                 final UrlResponseDto urlResponseDto = urlShortenerService.generateAndPersistShortUrl(urlRequestDto);
                 restResponse.setResult(urlResponseDto);
-                responseEntity = new ResponseEntity<>(restResponse, HttpStatus.CREATED);
+                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.CREATED);
             } catch (final Exception e) {
                 final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
                         .errorMessage("Failed to generate shortened url")
@@ -45,10 +45,41 @@ public class UrlShortenerController {
                         .build();
                 restResponse.setStatus("failure");
                 restResponse.setErrorData(errorResponseData);
-                responseEntity = new ResponseEntity<>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
         return responseEntity;
+    }
+
+    @GetMapping("{shortUrlCode}")
+    public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode, HttpServletResponse response) {
+        ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
+        final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
+
+        if (StringUtils.isEmpty(shortUrlCode)) {
+            final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                    .errorMessage("No url provided")
+                    .errorCode(HttpStatus.BAD_REQUEST.toString())
+                    .build();
+            restResponse.setErrorData(errorResponseData);
+            return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode);
+                restResponse.setResult(urlResponseDto);
+                response.sendRedirect(urlResponseDto.getOriginalUrl());
+                return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.CREATED);
+            } catch (final Exception e) {
+                final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                        .errorMessage("Failed to fetch original url")
+                        .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                        .details(e.getMessage())
+                        .build();
+                restResponse.setStatus("failure");
+                restResponse.setErrorData(errorResponseData);
+                return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }

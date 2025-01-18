@@ -17,11 +17,11 @@ public class UrlShortenerUtil {
         final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
         if (urlValidator.isValid(originalUrl)) {
             final LocalDateTime time = LocalDateTime.now();
-            final String encodedString = Hashing.murmur3_32_fixed()
+            final String shortUrlCode = Hashing.murmur3_32_fixed()
                     .hashString(originalUrl.concat(time.toString()), StandardCharsets.UTF_8)
                     .toString();
-            final String shortenedUrl = SHORTENED_URL_BASE.concat(encodedString);
-            return shortenedUrl;
+            final String shortUrl = SHORTENED_URL_BASE.concat(shortUrlCode);
+            return shortUrl;
         }
         return null;
     }
