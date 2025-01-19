@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -156,6 +158,49 @@ public class UrlShortenerControllerTest {
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
         assertEquals("Failed to fetch original url", restResponse.getErrorData().getErrorMessage());
+    }
+
+    @Test
+    void testGetAllOriginalUrlsSuccess() {
+        // Arrange
+        List<UrlResponseDto> expectedList = new ArrayList<>();
+        expectedList.add(new UrlResponseDto());
+        when(urlShortenerService.getAllOriginalUrls()).thenReturn(expectedList);
+
+        // Act
+        ResponseEntity<?> response = controller.getAllOriginalUrls();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(RestResponse.class, response.getBody().getClass());
+        RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
+        assertEquals("success", restResponse.getStatus());
+        assertNotNull(restResponse.getResult());
+        assertEquals(1, restResponse.getResult().size());
+    }
+
+    @Test
+    void testGetAllOriginalUrlsFailure() {
+        // Arrange
+        when(urlShortenerService.getAllOriginalUrls()).thenThrow(new RuntimeException("Test exception"));
+
+        // Act
+        ResponseEntity<?> response = controller.getAllOriginalUrls();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(RestResponse.class, response.getBody().getClass());
+        RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
+        assertEquals("failure", restResponse.getStatus());
+        assertNull(restResponse.getResult());
+        assertNotNull(restResponse.getErrorData());
+        assertEquals("Failed to fetch all original urls", restResponse.getErrorData().getErrorMessage());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.toString(), restResponse.getErrorData().getErrorCode());
+        assertNotNull(restResponse.getErrorData().getDetails());
     }
 
     @Test
