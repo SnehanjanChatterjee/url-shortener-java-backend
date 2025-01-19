@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant.SHORTENED_URL_BASE;
 
@@ -34,12 +36,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
                 .build();
         urlShortenerRepository.save(url);
 
-        return UrlResponseDto.builder()
-                .originalUrl(originalUrl)
-                .shortUrl(shortenedUrl)
-                .creationDateTime(currentTime)
-                .expirationDateTime(expirationTime)
-                .build();
+        return UrlShortenerUtil.buildUrlResponseDto(url);
     }
 
     @Override
@@ -49,12 +46,16 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
         if (url == null) {
             throw new Exception("No original url found which have a shortened url " + shortUrl);
         }
-        return UrlResponseDto.builder()
-                .originalUrl(url.getOriginalUrl())
-                .shortUrl(url.getShortUrl())
-                .creationDateTime(url.getCreatedAt())
-                .expirationDateTime(url.getExpiresAt())
-                .build();
+        return UrlShortenerUtil.buildUrlResponseDto(url);
+    }
+
+    @Override
+    public List<UrlResponseDto> getAllOriginalUrls() {
+        final List<Url> urls = urlShortenerRepository.findAll();
+        final List<UrlResponseDto> urlResponseDtoList = urls.stream()
+                .map(UrlShortenerUtil::buildUrlResponseDto)
+                .toList();
+        return urlResponseDtoList;
     }
 
     @Override

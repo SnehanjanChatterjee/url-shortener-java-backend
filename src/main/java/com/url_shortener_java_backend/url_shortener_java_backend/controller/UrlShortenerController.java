@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1.0/rest/url-shortener")
 public class UrlShortenerController {
@@ -55,7 +57,6 @@ public class UrlShortenerController {
     public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode,
                                             HttpServletResponse response,
                                             @RequestHeader(value = "Accept", required = false) String acceptHeader) {
-        ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
         if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
@@ -90,6 +91,26 @@ public class UrlShortenerController {
                 restResponse.setErrorData(errorResponseData);
                 return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllOriginalUrls() {
+        final RestResponse<List<UrlResponseDto>> restResponse = new RestResponse<>();
+        try {
+            final List<UrlResponseDto> urlResponseDtoList = urlShortenerService.getAllOriginalUrls();
+            restResponse.setResult(urlResponseDtoList);
+            return new ResponseEntity<RestResponse<List<UrlResponseDto>>>(restResponse, HttpStatus.OK);
+
+        } catch (final Exception e) {
+            final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                    .errorMessage("Failed to fetch all original urls")
+                    .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                    .details(e.getMessage())
+                    .build();
+            restResponse.setStatus("failure");
+            restResponse.setErrorData(errorResponseData);
+            return new ResponseEntity<RestResponse<List<UrlResponseDto>>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
