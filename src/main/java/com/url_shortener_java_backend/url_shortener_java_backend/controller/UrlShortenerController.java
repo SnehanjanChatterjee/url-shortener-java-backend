@@ -28,7 +28,7 @@ public class UrlShortenerController {
 
         if (urlRequestDto.getUrl() == null) {
             final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
-                    .errorMessage("No url provided")
+                    .errorMessage("No url provided. Please provide a valid long url to shorten.")
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
                     .build();
             restResponse.setErrorData(errorResponseData);
@@ -61,7 +61,7 @@ public class UrlShortenerController {
 
         if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
             final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
-                    .errorMessage("No url provided")
+                    .errorMessage("No url provided. Please provide a valid short url to fetch the original url.")
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
                     .build();
             restResponse.setErrorData(errorResponseData);
@@ -121,7 +121,7 @@ public class UrlShortenerController {
 
         if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
             final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
-                    .errorMessage("No url provided")
+                    .errorMessage("No url provided. Please provide a valid short url to be deleted.")
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
                     .build();
             restResponse.setErrorData(errorResponseData);
