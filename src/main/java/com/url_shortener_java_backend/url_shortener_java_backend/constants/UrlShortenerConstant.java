@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class UrlShortenerConstant {
-    @Value("${app.base.url}")
+    @Value("${app.backend.base.url}")
     private String shortenedUrlBase;
 }

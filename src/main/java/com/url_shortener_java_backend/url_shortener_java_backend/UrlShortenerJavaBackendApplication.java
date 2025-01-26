@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class UrlShortenerJavaBackendApplication {
-	@Value("${app.frontend.url}")
+	@Value("${app.frontend.base.url}")
 	private String frontendUrl;
 
 	public static void main(String[] args) {
