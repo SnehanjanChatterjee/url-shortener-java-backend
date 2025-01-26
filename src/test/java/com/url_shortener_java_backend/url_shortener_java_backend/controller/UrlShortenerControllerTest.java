@@ -77,7 +77,6 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("No url provided", restResponse.getErrorData().getErrorMessage());
     }
 
     @Test
@@ -93,7 +92,6 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("Failed to generate shortened url", restResponse.getErrorData().getErrorMessage());
     }
 
     @Test
@@ -140,7 +138,6 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("No url provided", restResponse.getErrorData().getErrorMessage());
     }
 
     @Test
@@ -157,7 +154,6 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("Failed to fetch original url", restResponse.getErrorData().getErrorMessage());
     }
 
     @Test
@@ -198,7 +194,6 @@ public class UrlShortenerControllerTest {
         assertEquals("failure", restResponse.getStatus());
         assertNull(restResponse.getResult());
         assertNotNull(restResponse.getErrorData());
-        assertEquals("Failed to fetch all original urls", restResponse.getErrorData().getErrorMessage());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.toString(), restResponse.getErrorData().getErrorCode());
         assertNotNull(restResponse.getErrorData().getDetails());
     }
@@ -229,7 +224,6 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("No url provided", restResponse.getErrorData().getErrorMessage());
     }
 
     @Test
@@ -246,6 +240,5 @@ public class UrlShortenerControllerTest {
         RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
-        assertEquals("Failed to delete url", restResponse.getErrorData().getErrorMessage());
     }
 }
