@@ -10,7 +10,7 @@ Backend of Url Shortener project for Spring Boot in Java
 ## Fork and Clone the Repository
 
 ### Fork the Repository
-   Go to my [GitHub repository](https://github.com/SnehanjanChatterjee/url-shortener-java-backend) and click the "Fork" button at the top right to create a copy of the repository under your own GitHub account.
+Click the <b>Fork</b> button at the top right to create a copy of the repository under your own GitHub account.
 
 ### Clone the Forked Repository
 Use the following commands to clone the repository and navigate to its directory:
