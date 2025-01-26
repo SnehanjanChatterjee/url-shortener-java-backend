@@ -10,6 +10,9 @@ public class UrlShortenerConstant {
     @Value("${app.backend.base.url}")
     private String shortenedUrlBase;
 
-    @Value("${app.frontend.base.url}")
-    private String frontendUrl;
+    @Value("${app.frontend.local.base.url}")
+    private String frontendLocalUrl;
+
+    @Value("${app.frontend.cloud.base.url}")
+    private String frontendCloudUrl;
 }
