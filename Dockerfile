@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM gradle:8.3.0-jdk21 AS build
+FROM gradle:8.12.0-jdk21 AS build
 COPY . .
 RUN gradle clean build -x test
 
