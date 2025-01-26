@@ -53,7 +53,18 @@ To run the project locally, go to UrlShortenerJavaBackendApplication file and ru
 ```
 The application will start on http://localhost:8080.
 
+## Access the Health Check Endpoint
+To verify the application's health status, navigate to the following URL in your browser or API client:
+
+```bash
+http://localhost:8080/actuator/health
+```
+This will return a JSON response indicating whether the application is running correctly.
+
 ## Deploy to Render
 Follow these steps to deploy your Spring Boot application to Render:
 
-[![Hosting Springboot App on render.com](https://img.youtube.com/vi/p3AIecyvok4/0.jpg)](https://www.youtube.com/watch?v=p3AIecyvok4)
+[//]: # ([![Hosting Springboot App on render.com]&#40;https://img.youtube.com/vi/p3AIecyvok4/0.jpg&#41;]&#40;https://www.youtube.com/watch?v=p3AIecyvok4&#41;)
+<a href="https://www.youtube.com/watch?v=p3AIecyvok4" target="_blank">
+  <img src="https://img.youtube.com/vi/p3AIecyvok4/0.jpg" alt="Hosting Spring Boot App on Render.com">
+</a>
