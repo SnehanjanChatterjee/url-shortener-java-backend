@@ -143,4 +143,24 @@ public class UrlShortenerController {
         }
         return responseEntity;
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllShortUrls() {
+        ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
+        final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
+        try {
+            urlShortenerService.deleteAllShortUrls();
+            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+        } catch (final Exception e) {
+            final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+                    .errorMessage("Failed to delete all urls")
+                    .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                    .details(e.getMessage())
+                    .build();
+            restResponse.setStatus("failure");
+            restResponse.setErrorData(errorResponseData);
+            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
+    }
 }

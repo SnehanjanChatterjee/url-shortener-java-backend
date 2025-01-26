@@ -13,4 +13,5 @@ public interface UrlShortenerService {
     public UrlResponseDto getOriginalUrl(final String shortUrlCode) throws Exception;
     public List<UrlResponseDto> getAllOriginalUrls();
     public void deleteShortUrl(final String shortUrlCode);
+    public void deleteAllShortUrls();
 }

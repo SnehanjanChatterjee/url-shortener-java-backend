@@ -68,4 +68,9 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
         final Url url = urlShortenerRepository.findByShortUrl(shortUrl);
         urlShortenerRepository.delete(url);
     }
+
+    @Override
+    public void deleteAllShortUrls() {
+        urlShortenerRepository.deleteAll();
+    }
 }
