@@ -1,5 +1,13 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.constants;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+@Data
 public class UrlShortenerConstant {
-    public static final String SHORTENED_URL_BASE = "http://localhost:8080/v1.0/rest/url-shortener/";
+
+    @Value("${app.base.url}")
+    private String shortenedUrlBase;
 }
