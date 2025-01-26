@@ -9,4 +9,7 @@ import org.springframework.stereotype.Component;
 public class UrlShortenerConstant {
     @Value("${app.backend.base.url}")
     private String shortenedUrlBase;
+
+    @Value("${app.frontend.base.url}")
+    private String frontendUrl;
 }
