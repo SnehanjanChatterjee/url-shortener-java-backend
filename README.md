@@ -1,5 +1,15 @@
-# url-shortener-java-backend
-Backend of Url Shortener project for Spring Boot in Java
+## Overview
+Backend of Url Shortener project for Spring Boot in Java. Frontend Repository: [url-shortener-nextjs-frontend](https://github.com/SnehanjanChatterjee/url-shortener-nextjs-frontend)
+
+Access the website at https://url-shortener-nextjs-frontend.vercel.app/
+
+## Note
+This backend app is hosted on [Render](https://www.render.com)'s free tier. Render spins down a Free web service that goes 15 minutes without receiving inbound traffic. 
+Render spins the service back up whenever it next receives a request to process.
+
+So if the website appears unresponsive, the backend is likely in "sleep" mode after being idle for 15 minutes.
+
+It’s currently waking up, which may take up to a minute. Kindly wait for a moment, and the app will be ready shortly. Thank you for your understanding!
 
 ## Prerequisites
 
