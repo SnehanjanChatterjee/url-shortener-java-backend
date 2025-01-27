@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/v1.0/rest/url-shortener")
@@ -149,7 +150,7 @@ public class UrlShortenerController {
         ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
         try {
-            urlShortenerService.deleteAllShortUrls();
+            CompletableFuture.runAsync(() -> urlShortenerService.deleteAllShortUrls());
             responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
         } catch (final Exception e) {
             final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
