@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 @SpringBootApplication
 public class UrlShortenerJavaBackendApplication {
 
@@ -24,10 +26,19 @@ public class UrlShortenerJavaBackendApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins(urlShortenerConstant.getFrontendCloudUrl(), urlShortenerConstant.getFrontendLocalUrl())
+						.allowedOrigins(getAllowedOrigins())
 						.allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
 			}
 		};
+	}
+
+	private String[] getAllowedOrigins() {
+		return List.of(
+				urlShortenerConstant.getFrontendLocalUrl(),
+				urlShortenerConstant.getFrontendCloudUrl(),
+				urlShortenerConstant.getFrontendCloudUrl2(),
+				urlShortenerConstant.getFrontendCloudUrl3()
+		).toArray(new String[0]);
 	}
 
 }
