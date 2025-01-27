@@ -37,8 +37,7 @@ public class UrlShortenerJavaBackendApplication {
 				urlShortenerConstant.getFrontendLocalUrl(),
 				urlShortenerConstant.getFrontendCloudUrl(),
 				urlShortenerConstant.getFrontendCloudUrl2(),
-				urlShortenerConstant.getFrontendCloudUrl3(),
-				urlShortenerConstant.getFrontendCloudUrl4()
+				urlShortenerConstant.getFrontendCloudUrl3()
 		).toArray(new String[0]);
 	}
 

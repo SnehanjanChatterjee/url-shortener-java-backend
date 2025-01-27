@@ -21,7 +21,4 @@ public class UrlShortenerConstant {
 
     @Value("${app.frontend.cloud.base.url.3}")
     private String frontendCloudUrl3;
-
-    @Value("${app.frontend.cloud.base.url.4}")
-    private String frontendCloudUrl4;
 }
