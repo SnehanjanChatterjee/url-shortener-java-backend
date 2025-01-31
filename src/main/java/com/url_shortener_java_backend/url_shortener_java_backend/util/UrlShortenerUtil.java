@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class UrlShortenerUtil {
@@ -41,5 +43,12 @@ public class UrlShortenerUtil {
                 .creationDateTime(url.getCreatedAt())
                 .expirationDateTime(url.getExpiresAt())
                 .build();
+    }
+
+    public static String getCurrentDateTimeInIndia() {
+        final ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+        final LocalDateTime timeInIndia = LocalDateTime.now(zoneId);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
+        return timeInIndia.format(formatter);
     }
 }
