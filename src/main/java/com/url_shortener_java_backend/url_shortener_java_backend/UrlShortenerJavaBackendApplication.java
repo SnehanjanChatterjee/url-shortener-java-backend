@@ -28,7 +28,7 @@ public class UrlShortenerJavaBackendApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins(getAllowedOrigins())
+						.allowedOriginPatterns(getAllowedOrigins())
 						.allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
 			}
 		};
