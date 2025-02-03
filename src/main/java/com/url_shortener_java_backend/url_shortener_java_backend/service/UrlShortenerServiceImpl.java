@@ -3,7 +3,7 @@ package com.url_shortener_java_backend.url_shortener_java_backend.service;
 import com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlRequestDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.model.Url;
+import com.url_shortener_java_backend.url_shortener_java_backend.entity.Url;
 import com.url_shortener_java_backend.url_shortener_java_backend.repository.UrlShortenerRepository;
 import com.url_shortener_java_backend.url_shortener_java_backend.util.UrlShortenerUtil;
 import lombok.NonNull;

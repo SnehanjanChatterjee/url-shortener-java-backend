@@ -3,7 +3,7 @@ package com.url_shortener_java_backend.url_shortener_java_backend.util;
 import com.google.common.hash.Hashing;
 import com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.model.Url;
+import com.url_shortener_java_backend.url_shortener_java_backend.entity.Url;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
