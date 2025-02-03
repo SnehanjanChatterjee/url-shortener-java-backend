@@ -16,5 +16,5 @@ public class User extends AbstractEntity {
     private String userId;
     private String name;
     private String email;
-    private String picture;
+    private String image;
 }

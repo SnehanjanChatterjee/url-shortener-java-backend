@@ -1,9 +1,9 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.controller;
 
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestResponse;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlRequestDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.service.UrlShortenerService;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlRequestDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.service.url.UrlShortenerService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

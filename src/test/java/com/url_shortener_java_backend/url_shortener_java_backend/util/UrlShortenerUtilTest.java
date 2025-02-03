@@ -1,7 +1,7 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.util;
 
 import com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.entity.Url;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
