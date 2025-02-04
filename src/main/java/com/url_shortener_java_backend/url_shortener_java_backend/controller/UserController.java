@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1.0/rest/user")
+@RequestMapping("/v1.0/rest/url-shortener/user")
 public class UserController extends BaseController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class UserController extends BaseController {
         final RestResponse<UserResponseDto> restResponse = new RestResponse<>();
 
         if (userRequestDto == null) {
-            final ErrorResponseData errorResponseData = new ErrorResponseData().builder()
+            final ErrorResponseData errorResponseData = ErrorResponseData.builder()
                     .errorMessage("No user data provided. Please provide a valid user data.")
                     .errorCode(HttpStatus.BAD_REQUEST.toString())
                     .build();

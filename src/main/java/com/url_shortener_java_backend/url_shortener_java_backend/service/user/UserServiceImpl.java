@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto registerUser(@NonNull UserRequestDto userRequestDto) {
         final User user = User.builder()
-                .userId(userRequestDto.getUserId())
+                .userId(userRequestDto.getId())
                 .name(userRequestDto.getName())
                 .email(userRequestDto.getEmail())
                 .image(userRequestDto.getImage())

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/v1.0/rest/url-shortener")
+@RequestMapping("/v1.0/rest/url-shortener/url")
 public class UrlShortenerController extends BaseController {
 
     @Autowired
