@@ -1,6 +1,5 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.controller;
 
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.ErrorResponseData;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestResponse;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlRequestDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
@@ -28,19 +27,14 @@ public class UrlShortenerController extends BaseController {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
         if (urlRequestDto.getUrl() == null) {
-            final ErrorResponseData errorResponseData = ErrorResponseData.builder()
-                    .errorMessage("No url provided. Please provide a valid long url to shorten.")
-                    .errorCode(HttpStatus.BAD_REQUEST.toString())
-                    .build();
-            restResponse.setErrorData(errorResponseData);
-            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+            responseEntity = getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid long url to shorten.");
         } else {
             try {
                 final UrlResponseDto urlResponseDto = urlShortenerService.generateAndPersistShortUrl(urlRequestDto);
                 restResponse.setResult(urlResponseDto);
-                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.CREATED);
+                responseEntity = new ResponseEntity<>(restResponse, HttpStatus.CREATED);
             } catch (final Exception e) {
-                responseEntity = getErrorResponseEntity(e, restResponse, "Failed to generate shortened url");
+                responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to generate shortened url");
             }
         }
 
@@ -54,12 +48,7 @@ public class UrlShortenerController extends BaseController {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
         if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
-            final ErrorResponseData errorResponseData = ErrorResponseData.builder()
-                    .errorMessage("No url provided. Please provide a valid short url to fetch the original url.")
-                    .errorCode(HttpStatus.BAD_REQUEST.toString())
-                    .build();
-            restResponse.setErrorData(errorResponseData);
-            return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+            return getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid short url to fetch the original url.");
         } else {
             try {
                 final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode);
@@ -72,10 +61,10 @@ public class UrlShortenerController extends BaseController {
                     return null; // No further response needed, as the redirection is handled
                 } else {
                     // For API clients (e.g., Postman), return the URL in JSON format
-                    return new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+                    return new ResponseEntity<>(restResponse, HttpStatus.OK);
                 }
             } catch (final Exception e) {
-                return getErrorResponseEntity(e, restResponse, "Failed to fetch original url");
+                return getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to fetch original url");
             }
         }
     }
@@ -86,9 +75,9 @@ public class UrlShortenerController extends BaseController {
         try {
             final List<UrlResponseDto> urlResponseDtoList = urlShortenerService.getAllOriginalUrls();
             restResponse.setResult(urlResponseDtoList);
-            return new ResponseEntity<RestResponse<List<UrlResponseDto>>>(restResponse, HttpStatus.OK);
+            return new ResponseEntity<>(restResponse, HttpStatus.OK);
         } catch (final Exception e) {
-            return getErrorResponseEntity(e, restResponse, "Failed to fetch all original urls");
+            return getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to fetch all original urls");
         }
     }
 
@@ -98,18 +87,13 @@ public class UrlShortenerController extends BaseController {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
         if (StringUtils.isEmpty(shortUrlCode) || shortUrlCode.equals("null")) {
-            final ErrorResponseData errorResponseData = ErrorResponseData.builder()
-                    .errorMessage("No url provided. Please provide a valid short url to be deleted.")
-                    .errorCode(HttpStatus.BAD_REQUEST.toString())
-                    .build();
-            restResponse.setErrorData(errorResponseData);
-            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+            responseEntity = getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid short url to be deleted.");
         } else {
             try {
                 urlShortenerService.deleteShortUrl(shortUrlCode);
-                responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+                responseEntity = new ResponseEntity<>(restResponse, HttpStatus.OK);
             } catch (final Exception e) {
-                responseEntity = getErrorResponseEntity(e, restResponse, "Failed to delete url");
+                responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to delete url");
             }
         }
         return responseEntity;
@@ -121,9 +105,9 @@ public class UrlShortenerController extends BaseController {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
         try {
             CompletableFuture.runAsync(() -> urlShortenerService.deleteAllShortUrls());
-            responseEntity = new ResponseEntity<RestResponse<UrlResponseDto>>(restResponse, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>(restResponse, HttpStatus.OK);
         } catch (final Exception e) {
-            responseEntity = getErrorResponseEntity(e, restResponse, "Failed to delete all urls");
+            responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to delete all urls");
         }
         return responseEntity;
     }

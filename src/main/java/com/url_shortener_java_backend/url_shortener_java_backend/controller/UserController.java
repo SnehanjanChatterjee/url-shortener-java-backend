@@ -1,6 +1,5 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.controller;
 
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.ErrorResponseData;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestResponse;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.user.UserRequestDto;
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.user.UserResponseDto;
@@ -23,19 +22,14 @@ public class UserController extends BaseController {
         final RestResponse<UserResponseDto> restResponse = new RestResponse<>();
 
         if (userRequestDto == null) {
-            final ErrorResponseData errorResponseData = ErrorResponseData.builder()
-                    .errorMessage("No user data provided. Please provide a valid user data.")
-                    .errorCode(HttpStatus.BAD_REQUEST.toString())
-                    .build();
-            restResponse.setErrorData(errorResponseData);
-            responseEntity = new ResponseEntity<RestResponse<UserResponseDto>>(restResponse, HttpStatus.BAD_REQUEST);
+            responseEntity = getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No user data provided. Please provide a valid user data.");
         } else {
             try {
                 final UserResponseDto UserResponseDto = userService.registerUser(userRequestDto);
                 restResponse.setResult(UserResponseDto);
-                responseEntity = new ResponseEntity<RestResponse<UserResponseDto>>(restResponse, HttpStatus.CREATED);
+                responseEntity = new ResponseEntity<>(restResponse, HttpStatus.CREATED);
             } catch (final Exception e) {
-                responseEntity = getErrorResponseEntity(e, restResponse, "Failed to save user data");
+                responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to save user data");
             }
         }
 

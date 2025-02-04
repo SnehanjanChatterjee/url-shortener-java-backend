@@ -5,21 +5,25 @@ import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestRespons
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public abstract class BaseController {
     public <T> ResponseEntity<RestResponse<T>> getErrorResponseEntity(
-            final Exception e,
+            @Nullable final Exception e,
+            @Nonnull final HttpStatus httpStatus,
             final RestResponse<T> restResponse,
             final String errorMessage) {
 
         final ErrorResponseData errorResponseData = ErrorResponseData.builder()
                 .errorMessage(errorMessage)
-                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-                .details(e.getMessage())
+                .errorCode(httpStatus.toString())
+                .details(e != null ? e.getMessage() : null)
                 .build();
 
         restResponse.setStatus("failure");
         restResponse.setErrorData(errorResponseData);
 
-        return new ResponseEntity<>(restResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(restResponse, httpStatus);
     }
 }
