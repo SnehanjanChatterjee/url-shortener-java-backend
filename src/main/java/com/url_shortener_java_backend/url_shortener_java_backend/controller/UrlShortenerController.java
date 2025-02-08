@@ -41,9 +41,8 @@ public class UrlShortenerController extends BaseController {
         return responseEntity;
     }
 
-    @GetMapping("{shortUrlCode}/{userId}")
+    @GetMapping("{shortUrlCode:[a-f0-9]{8}}")
     public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode,
-                                            @PathVariable String userId,
                                             HttpServletResponse response,
                                             @RequestHeader(value = "Accept", required = false) String acceptHeader) {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
@@ -52,7 +51,7 @@ public class UrlShortenerController extends BaseController {
             return getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid short url to fetch the original url.");
         } else {
             try {
-                final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode, userId);
+                final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode);
                 restResponse.setResult(urlResponseDto);
 
                 // Check if the client accepts HTML (browser request)
@@ -70,7 +69,7 @@ public class UrlShortenerController extends BaseController {
         }
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("{userId:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}}")
     public ResponseEntity<?> getAllOriginalUrls(@PathVariable String userId) {
         final RestResponse<List<UrlResponseDto>> restResponse = new RestResponse<>();
         try {

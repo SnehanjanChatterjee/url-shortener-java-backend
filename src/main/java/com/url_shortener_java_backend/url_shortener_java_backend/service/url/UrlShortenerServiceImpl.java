@@ -58,9 +58,9 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     }
 
     @Override
-    public UrlResponseDto getOriginalUrl(final String shortUrlCode, final String userId) throws Exception {
+    public UrlResponseDto getOriginalUrl(final String shortUrlCode) throws Exception {
         final String shortUrl = urlShortenerUtil.constructShortUrl(shortUrlCode);
-        final Url url = urlShortenerRepository.findByShortUrlAndUser_UserId(shortUrl, userId);
+        final Url url = urlShortenerRepository.findByShortUrl(shortUrl);
         if (url == null) {
             throw new Exception("No original url found which have a shortened url " + shortUrl);
         }

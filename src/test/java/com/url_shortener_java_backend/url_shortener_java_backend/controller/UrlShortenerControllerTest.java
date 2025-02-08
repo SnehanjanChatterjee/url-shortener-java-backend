@@ -92,9 +92,9 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetOriginalUrlSuccess_BrowserRequest() throws Exception {
-        when(urlShortenerService.getOriginalUrl(anyString(), anyString())).thenReturn(urlResponseDto);
+        when(urlShortenerService.getOriginalUrl(anyString())).thenReturn(urlResponseDto);
 
-        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, "abcd", mockResponse, "text/html");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "text/html");
 
         assertNull(response);
         verify(mockResponse).sendRedirect("https://example.com");
@@ -102,9 +102,9 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetOriginalUrlSuccess_ApiRequest() throws Exception {
-        when(urlShortenerService.getOriginalUrl(anyString(), anyString())).thenReturn(urlResponseDto);
+        when(urlShortenerService.getOriginalUrl(anyString())).thenReturn(urlResponseDto);
 
-        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, USER_ID, mockResponse, "application/json");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "application/json");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -116,7 +116,7 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetOriginalUrlFailure_InvalidShortUrlCode() throws Exception {
-        final ResponseEntity<?> response = controller.getOriginalUrl("", USER_ID, mockResponse, "text/html");
+        final ResponseEntity<?> response = controller.getOriginalUrl("", mockResponse, "text/html");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
@@ -127,9 +127,9 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetOriginalUrlFailure_ServiceError() throws Exception {
-        doThrow(new RuntimeException("Service error")).when(urlShortenerService).getOriginalUrl(anyString(), anyString());
+        doThrow(new RuntimeException("Service error")).when(urlShortenerService).getOriginalUrl(anyString());
 
-        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, USER_ID, mockResponse, "text/html");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "text/html");
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
 

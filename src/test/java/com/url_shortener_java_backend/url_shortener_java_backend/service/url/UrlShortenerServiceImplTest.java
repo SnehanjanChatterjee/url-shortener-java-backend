@@ -86,25 +86,25 @@ class UrlShortenerServiceImplTest {
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
                 .build();
-        when(urlShortenerRepository.findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID)).thenReturn(url);
+        when(urlShortenerRepository.findByShortUrl(SHORTENED_URL)).thenReturn(url);
 
-        final UrlResponseDto result = urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE, USER_ID);
+        final UrlResponseDto result = urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE);
 
         assertNotNull(result);
         assertEquals(ORIGINAL_URL, result.getOriginalUrl());
         assertEquals(SHORTENED_URL, result.getShortUrl());
 
-        verify(urlShortenerRepository).findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID);
+        verify(urlShortenerRepository).findByShortUrl(SHORTENED_URL);
     }
 
     @Test
     void testGetOriginalUrl_NotFound() {
-        when(urlShortenerRepository.findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID)).thenReturn(null);
+        when(urlShortenerRepository.findByShortUrl(SHORTENED_URL)).thenReturn(null);
 
-        final Exception exception = assertThrows(Exception.class, () -> urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE, USER_ID));
+        final Exception exception = assertThrows(Exception.class, () -> urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE));
         assertTrue(exception.getMessage().contains("No original url found"));
 
-        verify(urlShortenerRepository).findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID);
+        verify(urlShortenerRepository).findByShortUrl(SHORTENED_URL);
     }
 
     @Test
