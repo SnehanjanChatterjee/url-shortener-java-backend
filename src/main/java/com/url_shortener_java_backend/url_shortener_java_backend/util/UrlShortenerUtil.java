@@ -44,6 +44,7 @@ public class UrlShortenerUtil {
                 .shortUrl(url.getShortUrl())
                 .creationDateTime(url.getCreatedAt())
                 .expirationDateTime(url.getExpiresAt())
+                .userId(url.getUser() != null ? url.getUser().getUserId() : null)
                 .build();
     }
 

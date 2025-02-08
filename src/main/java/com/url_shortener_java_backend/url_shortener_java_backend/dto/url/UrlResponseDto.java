@@ -16,4 +16,5 @@ public class UrlResponseDto {
     private String shortUrl;
     private LocalDateTime creationDateTime;
     private LocalDateTime expirationDateTime;
+    private String userId;
 }

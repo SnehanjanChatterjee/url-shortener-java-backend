@@ -41,8 +41,9 @@ public class UrlShortenerController extends BaseController {
         return responseEntity;
     }
 
-    @GetMapping("{shortUrlCode}")
+    @GetMapping("{shortUrlCode}/{userId}")
     public ResponseEntity<?> getOriginalUrl(@PathVariable String shortUrlCode,
+                                            @PathVariable String userId,
                                             HttpServletResponse response,
                                             @RequestHeader(value = "Accept", required = false) String acceptHeader) {
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
@@ -51,7 +52,7 @@ public class UrlShortenerController extends BaseController {
             return getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid short url to fetch the original url.");
         } else {
             try {
-                final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode);
+                final UrlResponseDto urlResponseDto = urlShortenerService.getOriginalUrl(shortUrlCode, userId);
                 restResponse.setResult(urlResponseDto);
 
                 // Check if the client accepts HTML (browser request)
@@ -69,11 +70,11 @@ public class UrlShortenerController extends BaseController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllOriginalUrls() {
+    @GetMapping("{userId}")
+    public ResponseEntity<?> getAllOriginalUrls(@PathVariable String userId) {
         final RestResponse<List<UrlResponseDto>> restResponse = new RestResponse<>();
         try {
-            final List<UrlResponseDto> urlResponseDtoList = urlShortenerService.getAllOriginalUrls();
+            final List<UrlResponseDto> urlResponseDtoList = urlShortenerService.getAllOriginalUrls(userId);
             restResponse.setResult(urlResponseDtoList);
             return new ResponseEntity<>(restResponse, HttpStatus.OK);
         } catch (final Exception e) {
@@ -81,8 +82,9 @@ public class UrlShortenerController extends BaseController {
         }
     }
 
-    @DeleteMapping("{shortUrlCode}")
-    public ResponseEntity<?> deleteShortUrl(@PathVariable String shortUrlCode) {
+    @DeleteMapping("{shortUrlCode}/{userId}")
+    public ResponseEntity<?> deleteShortUrl(@PathVariable String shortUrlCode,
+                                            @PathVariable String userId) {
         ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
 
@@ -90,7 +92,7 @@ public class UrlShortenerController extends BaseController {
             responseEntity = getErrorResponseEntity(null, HttpStatus.BAD_REQUEST, restResponse, "No url provided. Please provide a valid short url to be deleted.");
         } else {
             try {
-                urlShortenerService.deleteShortUrl(shortUrlCode);
+                urlShortenerService.deleteShortUrl(shortUrlCode, userId);
                 responseEntity = new ResponseEntity<>(restResponse, HttpStatus.OK);
             } catch (final Exception e) {
                 responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to delete url");
@@ -99,12 +101,12 @@ public class UrlShortenerController extends BaseController {
         return responseEntity;
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteAllShortUrls() {
+    @DeleteMapping("{userId}")
+    public ResponseEntity<?> deleteAllShortUrls(@PathVariable String userId) {
         ResponseEntity<RestResponse<UrlResponseDto>> responseEntity;
         final RestResponse<UrlResponseDto> restResponse = new RestResponse<>();
         try {
-            CompletableFuture.runAsync(() -> urlShortenerService.deleteAllShortUrls());
+            CompletableFuture.runAsync(() -> urlShortenerService.deleteAllShortUrls(userId));
             responseEntity = new ResponseEntity<>(restResponse, HttpStatus.OK);
         } catch (final Exception e) {
             responseEntity = getErrorResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR, restResponse, "Failed to delete all urls");

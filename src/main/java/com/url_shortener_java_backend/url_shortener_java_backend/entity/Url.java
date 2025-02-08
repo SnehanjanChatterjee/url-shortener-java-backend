@@ -19,6 +19,6 @@ public class Url extends AbstractEntity {
     private String shortUrl;
     private LocalDateTime expiresAt;
     @ManyToOne(fetch = FetchType.LAZY)  // Many URLs can belong to one user
-    @JoinColumn(name = "user_id")  // Foreign key column, nullable is true for guest user
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")  // Foreign key column, nullable is true for guest user. If referencedColumnName is not set, by default it will refer to the primary key "id" column of User table
     private User user;
 }

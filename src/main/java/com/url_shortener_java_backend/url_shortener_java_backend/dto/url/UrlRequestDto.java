@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class UrlRequestDto {
     private String url;
     private String expirationDateTime;
+    private String userId;
 }
