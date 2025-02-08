@@ -59,7 +59,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 
     @Override
     public UrlResponseDto getOriginalUrl(final String shortUrlCode, final String userId) throws Exception {
-        final String shortUrl = urlShortenerConstant.getShortenedUrlBase().concat("/").concat(shortUrlCode);
+        final String shortUrl = urlShortenerUtil.constructShortUrl(shortUrlCode);
         final Url url = urlShortenerRepository.findByShortUrlAndUser_UserId(shortUrl, userId);
         if (url == null) {
             throw new Exception("No original url found which have a shortened url " + shortUrl);
@@ -78,7 +78,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     @Transactional
     @Override
     public void deleteShortUrl(final String shortUrlCode, final String userId) {
-        final String shortUrl = urlShortenerConstant.getShortenedUrlBase().concat("/").concat(shortUrlCode);
+        final String shortUrl = urlShortenerUtil.constructShortUrl(shortUrlCode);
         final Url url = urlShortenerRepository.findByShortUrlAndUser_UserId(shortUrl, userId);
         urlShortenerRepository.delete(url);
     }

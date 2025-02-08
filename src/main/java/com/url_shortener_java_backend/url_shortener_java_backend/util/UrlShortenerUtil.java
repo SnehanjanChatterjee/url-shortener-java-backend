@@ -32,10 +32,13 @@ public class UrlShortenerUtil {
             final String shortUrlCode = Hashing.murmur3_32_fixed()
                     .hashString(originalUrl.concat(time.toString()), StandardCharsets.UTF_8)
                     .toString();
-            final String shortUrl = urlShortenerConstant.getShortenedUrlBase().concat("/").concat(shortUrlCode);
-            return shortUrl;
+            return constructShortUrl(shortUrlCode);
         }
         return null;
+    }
+
+    public String constructShortUrl(final String shortUrlCode) {
+        return urlShortenerConstant.getShortenedUrlBase().concat("/url/").concat(shortUrlCode);
     }
 
     public UrlResponseDto buildUrlResponseDto(final Url url) {

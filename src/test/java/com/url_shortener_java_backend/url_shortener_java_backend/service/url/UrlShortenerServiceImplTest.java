@@ -46,7 +46,7 @@ class UrlShortenerServiceImplTest {
     @BeforeEach
     void setUp() {
         lenient().when(urlShortenerConstant.getShortenedUrlBase()).thenReturn("http://localhost:8080/v1.0/rest/url-shortener");
-        SHORTENED_URL = urlShortenerConstant.getShortenedUrlBase() + "/" + SHORT_URL_CODE;
+        SHORTENED_URL = urlShortenerConstant.getShortenedUrlBase() + "/url/" + SHORT_URL_CODE;
 
         lenient().when(urlShortenerUtil.getExpirationTime(any(LocalDateTime.class))).thenReturn(EXPIRATION_TIME);
         lenient().when(urlShortenerUtil.convertToShortUrl(ORIGINAL_URL)).thenReturn(SHORTENED_URL);
@@ -56,6 +56,7 @@ class UrlShortenerServiceImplTest {
                 .creationDateTime(CURRENT_TIME)
                 .expirationDateTime(EXPIRATION_TIME)
                 .build());
+        lenient().when(urlShortenerUtil.constructShortUrl(SHORT_URL_CODE)).thenReturn(SHORTENED_URL);
     }
 
     @Test
@@ -115,7 +116,7 @@ class UrlShortenerServiceImplTest {
                 .expiresAt(EXPIRATION_TIME)
                 .build();
         final Url url2 = Url.builder()
-                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/67890")
+                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/url/67890")
                 .originalUrl("https://www.example2.com")
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
@@ -166,7 +167,7 @@ class UrlShortenerServiceImplTest {
                 .expiresAt(EXPIRATION_TIME)
                 .build();
         final Url url2 = Url.builder()
-                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/67890")
+                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/url/67890")
                 .originalUrl("https://www.example2.com")
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
