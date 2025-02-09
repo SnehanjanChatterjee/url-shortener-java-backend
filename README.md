@@ -83,8 +83,8 @@ To verify the application's health status, navigate to the following URL in your
 This will return a JSON response indicating whether the application is running correctly.
 
 ## Deploy to Render
-Follow these steps to deploy your Spring Boot application to Render:
+Follow these steps to deploy your Spring Boot application to Render: [Hosting Springboot App on render.com](https://www.youtube.com/watch?v=p3AIecyvok4)
 
-[![Hosting Springboot App on render.com](https://img.youtube.com/vi/p3AIecyvok4/0.jpg)](https://www.youtube.com/watch?v=p3AIecyvok4)
+<!-- [![Hosting Springboot App on render.com](https://img.youtube.com/vi/p3AIecyvok4/0.jpg)](https://www.youtube.com/watch?v=p3AIecyvok4) -->
 
 </details
