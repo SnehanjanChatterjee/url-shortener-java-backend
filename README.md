@@ -36,7 +36,10 @@ Example .env file:
 
 ```
 BACKEND_CLOUD_BASE_URL=<add-url-of-hosted-backend-service>
-FRONTEND_CLOUD_BASE_URL=<add-url-of-hosted-frontend-service>
+FRONTEND_LOCAL_BASE_URL=<add-url-of-localhost-frontend-service i.e http://localhost:3000>
+FRONTEND_CLOUD_BASE_URL=<add-url-of-hosted-frontend-service-main-domain>
+FRONTEND_CLOUD_BASE_URL_2=<add-url-of-hosted-frontend-service-domain2> [Optional]
+FRONTEND_CLOUD_BASE_URL_3=<add-url-of-hosted-frontend-service-domain3> [Optional]
 ```
 
 Add the .env file to .gitignore to avoid committing sensitive information.
