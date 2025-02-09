@@ -2,8 +2,10 @@ package com.url_shortener_java_backend.url_shortener_java_backend.util;
 
 import com.google.common.hash.Hashing;
 import com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.model.Url;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.user.UserResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.entity.Url;
+import com.url_shortener_java_backend.url_shortener_java_backend.entity.User;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,10 +32,13 @@ public class UrlShortenerUtil {
             final String shortUrlCode = Hashing.murmur3_32_fixed()
                     .hashString(originalUrl.concat(time.toString()), StandardCharsets.UTF_8)
                     .toString();
-            final String shortUrl = urlShortenerConstant.getShortenedUrlBase().concat("/").concat(shortUrlCode);
-            return shortUrl;
+            return constructShortUrl(shortUrlCode);
         }
         return null;
+    }
+
+    public String constructShortUrl(final String shortUrlCode) {
+        return urlShortenerConstant.getShortenedUrlBase().concat("/url/").concat(shortUrlCode);
     }
 
     public UrlResponseDto buildUrlResponseDto(final Url url) {
@@ -42,6 +47,18 @@ public class UrlShortenerUtil {
                 .shortUrl(url.getShortUrl())
                 .creationDateTime(url.getCreatedAt())
                 .expirationDateTime(url.getExpiresAt())
+                .userId(url.getUser() != null ? url.getUser().getUserId() : null)
+                .build();
+    }
+
+    public UserResponseDto buildUserResponseDto(final User user) {
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .image(user.getImage())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 

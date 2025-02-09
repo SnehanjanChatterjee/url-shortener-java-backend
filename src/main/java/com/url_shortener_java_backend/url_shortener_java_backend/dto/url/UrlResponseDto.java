@@ -1,4 +1,4 @@
-package com.url_shortener_java_backend.url_shortener_java_backend.dto;
+package com.url_shortener_java_backend.url_shortener_java_backend.dto.url;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,4 +16,5 @@ public class UrlResponseDto {
     private String shortUrl;
     private LocalDateTime creationDateTime;
     private LocalDateTime expirationDateTime;
+    private String userId;
 }

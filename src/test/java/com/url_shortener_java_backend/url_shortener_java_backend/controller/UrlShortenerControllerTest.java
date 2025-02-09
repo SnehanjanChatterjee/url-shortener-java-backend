@@ -1,9 +1,9 @@
 package com.url_shortener_java_backend.url_shortener_java_backend.controller;
 
 import com.url_shortener_java_backend.url_shortener_java_backend.dto.RestResponse;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlRequestDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.service.UrlShortenerService;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlRequestDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.service.url.UrlShortenerService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UrlShortenerControllerTest {
-
     @Mock
     private UrlShortenerService urlShortenerService;
 
@@ -35,9 +34,12 @@ public class UrlShortenerControllerTest {
     private UrlResponseDto urlResponseDto;
     private HttpServletResponse mockResponse;
 
+    public static final String SHORT_URL_CODE = "test_short_code";
+    public static final String USER_ID = "test_user_id";
+
     @BeforeEach
     void setUp() {
-        urlRequestDto = new UrlRequestDto("https://example.com", null);
+        urlRequestDto = new UrlRequestDto("https://example.com", null, USER_ID);
         urlResponseDto = UrlResponseDto.builder()
                 .originalUrl("https://example.com")
                 .shortUrl("https://short.url")
@@ -50,76 +52,63 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGenerateShortUrlSuccess() {
-        // Arrange
         when(urlShortenerService.generateAndPersistShortUrl(any())).thenReturn(urlResponseDto);
 
-        // Act
-        ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
+        final ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
 
-        // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getResult());
-        assertTrue(restResponse.getResult() instanceof UrlResponseDto);
+        assertInstanceOf(UrlResponseDto.class, restResponse.getResult());
     }
 
     @Test
     void testGenerateShortUrlFailure_NullUrl() {
-        // Arrange
         urlRequestDto.setUrl(null);
 
-        // Act
-        ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
+        final ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
 
     @Test
     void testGenerateShortUrlFailure_ServiceError() {
-        // Arrange
         doThrow(new RuntimeException("Service error")).when(urlShortenerService).generateAndPersistShortUrl(any());
 
-        // Act
-        ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
+        final ResponseEntity<?> response = controller.generateShortUrl(urlRequestDto);
 
-        // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
 
     @Test
     void testGetOriginalUrlSuccess_BrowserRequest() throws Exception {
-        // Arrange
-        String shortUrlCode = "abc123";
-        when(urlShortenerService.getOriginalUrl(any())).thenReturn(urlResponseDto);
+        when(urlShortenerService.getOriginalUrl(anyString())).thenReturn(urlResponseDto);
 
-        // Act
-        ResponseEntity<?> response = controller.getOriginalUrl(shortUrlCode, mockResponse, "text/html");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "text/html");
 
-        // Assert
         assertNull(response);
         verify(mockResponse).sendRedirect("https://example.com");
     }
 
     @Test
     void testGetOriginalUrlSuccess_ApiRequest() throws Exception {
-        // Arrange
-        String shortUrlCode = "abc123";
-        when(urlShortenerService.getOriginalUrl(any())).thenReturn(urlResponseDto);
+        when(urlShortenerService.getOriginalUrl(anyString())).thenReturn(urlResponseDto);
 
-        // Act
-        ResponseEntity<?> response = controller.getOriginalUrl(shortUrlCode, mockResponse, "application/json");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "application/json");
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getResult());
         assertTrue(restResponse.getResult() instanceof UrlResponseDto);
@@ -127,51 +116,42 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetOriginalUrlFailure_InvalidShortUrlCode() throws Exception {
-        // Arrange
-        String shortUrlCode = "";
+        final ResponseEntity<?> response = controller.getOriginalUrl("", mockResponse, "text/html");
 
-        // Act
-        ResponseEntity<?> response = controller.getOriginalUrl(shortUrlCode, mockResponse, "text/html");
-
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
 
     @Test
     void testGetOriginalUrlFailure_ServiceError() throws Exception {
-        // Arrange
-        String shortUrlCode = "abc123";
-        doThrow(new RuntimeException("Service error")).when(urlShortenerService).getOriginalUrl(any());
+        doThrow(new RuntimeException("Service error")).when(urlShortenerService).getOriginalUrl(anyString());
 
-        // Act
-        ResponseEntity<?> response = controller.getOriginalUrl(shortUrlCode, mockResponse, "text/html");
+        final ResponseEntity<?> response = controller.getOriginalUrl(SHORT_URL_CODE, mockResponse, "text/html");
 
-        // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
 
     @Test
     void testGetAllOriginalUrlsSuccess() {
-        // Arrange
-        List<UrlResponseDto> expectedList = new ArrayList<>();
+        final List<UrlResponseDto> expectedList = new ArrayList<>();
         expectedList.add(new UrlResponseDto());
-        when(urlShortenerService.getAllOriginalUrls()).thenReturn(expectedList);
+        when(urlShortenerService.getAllOriginalUrls(anyString())).thenReturn(expectedList);
 
-        // Act
-        ResponseEntity<?> response = controller.getAllOriginalUrls();
+        ResponseEntity<?> response = controller.getAllOriginalUrls(USER_ID);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(RestResponse.class, response.getBody().getClass());
-        RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
+
+        final RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
         assertEquals("success", restResponse.getStatus());
         assertNotNull(restResponse.getResult());
         assertEquals(1, restResponse.getResult().size());
@@ -179,18 +159,16 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testGetAllOriginalUrlsFailure() {
-        // Arrange
-        when(urlShortenerService.getAllOriginalUrls()).thenThrow(new RuntimeException("Test exception"));
+        when(urlShortenerService.getAllOriginalUrls(anyString())).thenThrow(new RuntimeException("Test exception"));
 
-        // Act
-        ResponseEntity<?> response = controller.getAllOriginalUrls();
+        final ResponseEntity<?> response = controller.getAllOriginalUrls(USER_ID);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(RestResponse.class, response.getBody().getClass());
-        RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
+
+        final RestResponse<List<UrlResponseDto>> restResponse = (RestResponse<List<UrlResponseDto>>) response.getBody();
         assertEquals("failure", restResponse.getStatus());
         assertNull(restResponse.getResult());
         assertNotNull(restResponse.getErrorData());
@@ -200,45 +178,44 @@ public class UrlShortenerControllerTest {
 
     @Test
     void testDeleteShortUrlSuccess() {
-        // Arrange
-        String shortUrlCode = "abc123";
+        final ResponseEntity<?> response = controller.deleteShortUrl(SHORT_URL_CODE, USER_ID);
 
-        // Act
-        ResponseEntity<?> response = controller.deleteShortUrl(shortUrlCode);
-
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(urlShortenerService).deleteShortUrl(eq(shortUrlCode));
+        verify(urlShortenerService).deleteShortUrl(eq(SHORT_URL_CODE), eq(USER_ID));
     }
 
     @Test
     void testDeleteShortUrlFailure_InvalidShortUrlCode() {
-        // Arrange
-        String shortUrlCode = "";
+        ResponseEntity<?> response = controller.deleteShortUrl("", USER_ID);
 
-        // Act
-        ResponseEntity<?> response = controller.deleteShortUrl(shortUrlCode);
-
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
 
     @Test
     void testDeleteShortUrlFailure_ServiceError() {
-        // Arrange
-        String shortUrlCode = "abc123";
-        doThrow(new RuntimeException("Service error")).when(urlShortenerService).deleteShortUrl(any());
+        doThrow(new RuntimeException("Service error")).when(urlShortenerService).deleteShortUrl(anyString(), anyString());
 
-        // Act
-        ResponseEntity<?> response = controller.deleteShortUrl(shortUrlCode);
+        final ResponseEntity<?> response = controller.deleteShortUrl(SHORT_URL_CODE, USER_ID);
 
-        // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+
+        final RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
         assertNotNull(restResponse);
         assertNotNull(restResponse.getErrorData());
     }
+
+    @Test
+    void testDeleteAllShortUrlsSuccess() {
+        final ResponseEntity<?> response = controller.deleteAllShortUrls(USER_ID);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        RestResponse<?> restResponse = (RestResponse<?>) response.getBody();
+        assertNotNull(restResponse);
+        assertNull(restResponse.getErrorData());
+    }
+
 }

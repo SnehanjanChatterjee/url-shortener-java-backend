@@ -1,9 +1,9 @@
-package com.url_shortener_java_backend.url_shortener_java_backend.service;
+package com.url_shortener_java_backend.url_shortener_java_backend.service.url;
 
 import com.url_shortener_java_backend.url_shortener_java_backend.constants.UrlShortenerConstant;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlRequestDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.dto.UrlResponseDto;
-import com.url_shortener_java_backend.url_shortener_java_backend.model.Url;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlRequestDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.dto.url.UrlResponseDto;
+import com.url_shortener_java_backend.url_shortener_java_backend.entity.Url;
 import com.url_shortener_java_backend.url_shortener_java_backend.repository.UrlShortenerRepository;
 import com.url_shortener_java_backend.url_shortener_java_backend.util.UrlShortenerUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,22 +39,24 @@ class UrlShortenerServiceImplTest {
     private static final String SHORT_URL_CODE = "12345";
     private static final LocalDateTime CURRENT_TIME = LocalDateTime.of(2022, 1, 1, 12, 0, 0);
     private static final LocalDateTime EXPIRATION_TIME = CURRENT_TIME.plusDays(30);
+    public static final String USER_ID = "test_user_id";
 
-    private String shortenedUrl;
+    private String SHORTENED_URL;
 
     @BeforeEach
     void setUp() {
         lenient().when(urlShortenerConstant.getShortenedUrlBase()).thenReturn("http://localhost:8080/v1.0/rest/url-shortener");
-        shortenedUrl = urlShortenerConstant.getShortenedUrlBase() + "/" + SHORT_URL_CODE;
+        SHORTENED_URL = urlShortenerConstant.getShortenedUrlBase() + "/url/" + SHORT_URL_CODE;
 
         lenient().when(urlShortenerUtil.getExpirationTime(any(LocalDateTime.class))).thenReturn(EXPIRATION_TIME);
-        lenient().when(urlShortenerUtil.convertToShortUrl(ORIGINAL_URL)).thenReturn(shortenedUrl);
+        lenient().when(urlShortenerUtil.convertToShortUrl(ORIGINAL_URL)).thenReturn(SHORTENED_URL);
         lenient().when(urlShortenerUtil.buildUrlResponseDto(any(Url.class))).thenReturn(UrlResponseDto.builder()
                 .originalUrl(ORIGINAL_URL)
-                .shortUrl(shortenedUrl)
+                .shortUrl(SHORTENED_URL)
                 .creationDateTime(CURRENT_TIME)
                 .expirationDateTime(EXPIRATION_TIME)
                 .build());
+        lenient().when(urlShortenerUtil.constructShortUrl(SHORT_URL_CODE)).thenReturn(SHORTENED_URL);
     }
 
     @Test
@@ -64,14 +66,11 @@ class UrlShortenerServiceImplTest {
 
     @Test
     void testGenerateAndPersistShortUrl() {
-        // Arrange
         when(urlShortenerRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        UrlRequestDto urlRequestDto = UrlRequestDto.builder().url(ORIGINAL_URL).build();
+        final UrlRequestDto urlRequestDto = UrlRequestDto.builder().url(ORIGINAL_URL).build();
 
-        // Act
-        UrlResponseDto result = urlShortenerServiceImpl.generateAndPersistShortUrl(urlRequestDto);
+        final UrlResponseDto result = urlShortenerServiceImpl.generateAndPersistShortUrl(urlRequestDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(ORIGINAL_URL, result.getOriginalUrl());
         assertTrue(result.getShortUrl().contains(urlShortenerConstant.getShortenedUrlBase()));
@@ -81,95 +80,104 @@ class UrlShortenerServiceImplTest {
 
     @Test
     void testGetOriginalUrl_Found() throws Exception {
-        // Arrange
-        Url url = Url.builder()
-                .shortUrl(shortenedUrl)
+        final Url url = Url.builder()
+                .shortUrl(SHORTENED_URL)
                 .originalUrl(ORIGINAL_URL)
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
                 .build();
-        when(urlShortenerRepository.findByShortUrl(shortenedUrl)).thenReturn(url);
+        when(urlShortenerRepository.findByShortUrl(SHORTENED_URL)).thenReturn(url);
 
-        // Act
-        UrlResponseDto result = urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE);
+        final UrlResponseDto result = urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE);
 
-        // Assert
         assertNotNull(result);
         assertEquals(ORIGINAL_URL, result.getOriginalUrl());
-        assertEquals(shortenedUrl, result.getShortUrl());
+        assertEquals(SHORTENED_URL, result.getShortUrl());
 
-        verify(urlShortenerRepository).findByShortUrl(shortenedUrl);
+        verify(urlShortenerRepository).findByShortUrl(SHORTENED_URL);
     }
 
     @Test
     void testGetOriginalUrl_NotFound() {
-        // Arrange
-        when(urlShortenerRepository.findByShortUrl(shortenedUrl)).thenReturn(null);
+        when(urlShortenerRepository.findByShortUrl(SHORTENED_URL)).thenReturn(null);
 
-        // Act and Assert
-        Exception exception = assertThrows(Exception.class, () -> urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE));
+        final Exception exception = assertThrows(Exception.class, () -> urlShortenerServiceImpl.getOriginalUrl(SHORT_URL_CODE));
         assertTrue(exception.getMessage().contains("No original url found"));
 
-        verify(urlShortenerRepository).findByShortUrl(shortenedUrl);
+        verify(urlShortenerRepository).findByShortUrl(SHORTENED_URL);
     }
 
     @Test
     void testGetAllOriginalUrls() {
-        // Arrange
-        Url url1 = Url.builder()
-                .shortUrl(shortenedUrl)
+        final Url url1 = Url.builder()
+                .shortUrl(SHORTENED_URL)
                 .originalUrl(ORIGINAL_URL)
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
                 .build();
-        Url url2 = Url.builder()
-                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/67890")
+        final Url url2 = Url.builder()
+                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/url/67890")
                 .originalUrl("https://www.example2.com")
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
                 .build();
-        when(urlShortenerRepository.findAll()).thenReturn(List.of(url1, url2));
+        when(urlShortenerRepository.findByUser_UserId(USER_ID)).thenReturn(List.of(url1, url2));
 
-        // Act
-        List<UrlResponseDto> results = urlShortenerServiceImpl.getAllOriginalUrls();
+        final List<UrlResponseDto> results = urlShortenerServiceImpl.getAllOriginalUrls(USER_ID);
 
-        // Assert
         assertEquals(2, results.size());
         assertEquals(ORIGINAL_URL, results.get(0).getOriginalUrl());
-        assertEquals(shortenedUrl, results.get(0).getShortUrl());
+        assertEquals(SHORTENED_URL, results.get(0).getShortUrl());
 
-        verify(urlShortenerRepository).findAll();
+        verify(urlShortenerRepository).findByUser_UserId(USER_ID);
     }
 
     @Test
     void testDeleteShortUrl() {
-        // Arrange
-        Url url = Url.builder()
-                .shortUrl(shortenedUrl)
+        final Url url = Url.builder()
+                .shortUrl(SHORTENED_URL)
                 .originalUrl(ORIGINAL_URL)
                 .createdAt(CURRENT_TIME)
                 .expiresAt(EXPIRATION_TIME)
                 .build();
-        when(urlShortenerRepository.findByShortUrl(shortenedUrl)).thenReturn(url);
+        when(urlShortenerRepository.findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID)).thenReturn(url);
 
-        // Act
-        urlShortenerServiceImpl.deleteShortUrl(SHORT_URL_CODE);
+        urlShortenerServiceImpl.deleteShortUrl(SHORT_URL_CODE, USER_ID);
 
-        // Assert
-        verify(urlShortenerRepository).findByShortUrl(shortenedUrl);
+        verify(urlShortenerRepository).findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID);
         verify(urlShortenerRepository).delete(url);
     }
 
     @Test
     void testDeleteShortUrl_NotFound() {
-        // Arrange
-        when(urlShortenerRepository.findByShortUrl(shortenedUrl)).thenReturn(null);
+        when(urlShortenerRepository.findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID)).thenReturn(null);
 
-        // Act
-        urlShortenerServiceImpl.deleteShortUrl(SHORT_URL_CODE);
+        urlShortenerServiceImpl.deleteShortUrl(SHORT_URL_CODE, USER_ID);
 
-        // Assert
-        verify(urlShortenerRepository).findByShortUrl(shortenedUrl);
+        verify(urlShortenerRepository).findByShortUrlAndUser_UserId(SHORTENED_URL, USER_ID);
         verify(urlShortenerRepository).delete(null);
+    }
+
+    @Test
+    void testDeleteAllShortUrl() {
+        final Url url1 = Url.builder()
+                .shortUrl(SHORTENED_URL)
+                .originalUrl(ORIGINAL_URL)
+                .createdAt(CURRENT_TIME)
+                .expiresAt(EXPIRATION_TIME)
+                .build();
+        final Url url2 = Url.builder()
+                .shortUrl(urlShortenerConstant.getShortenedUrlBase() + "/url/67890")
+                .originalUrl("https://www.example2.com")
+                .createdAt(CURRENT_TIME)
+                .expiresAt(EXPIRATION_TIME)
+                .build();
+        final List<Url> urls = List.of(url1, url2);
+        when(urlShortenerRepository.findByUser_UserId(USER_ID)).thenReturn(urls);
+
+        urlShortenerServiceImpl.deleteAllShortUrls(USER_ID);
+
+        verify(urlShortenerRepository).findByUser_UserId(USER_ID);
+        verify(urlShortenerRepository).deleteAll(urls);
     }
 }
