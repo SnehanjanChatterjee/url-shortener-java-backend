@@ -11,6 +11,17 @@ So if the website appears unresponsive, the backend is likely in "sleep" mode af
 
 It’s currently waking up, which may take up to a minute. Kindly wait for a moment, and the app will be ready shortly. Thank you for your understanding!
 
+## Demo
+![image](https://github.com/user-attachments/assets/45ab9fcd-c291-4640-b0c6-9c22aa41b4c9)
+![image](https://github.com/user-attachments/assets/93caf0e1-2439-41a1-839a-36d0e1f744a2)
+![image](https://github.com/user-attachments/assets/b983a3b0-4ee7-409b-a3ce-23791a5037ad)
+
+<details>
+
+<summary>
+How to run the app locally
+</summary>
+
 ## Prerequisites
 
 1. **JDK 21+** - Make sure you have Java 21 or later installed.
@@ -75,3 +86,5 @@ This will return a JSON response indicating whether the application is running c
 Follow these steps to deploy your Spring Boot application to Render:
 
 [![Hosting Springboot App on render.com](https://img.youtube.com/vi/p3AIecyvok4/0.jpg)](https://www.youtube.com/watch?v=p3AIecyvok4)
+
+</details
