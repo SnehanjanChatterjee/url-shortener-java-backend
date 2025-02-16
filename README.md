@@ -16,6 +16,10 @@ It’s currently waking up, which may take up to a minute. Kindly wait for a mom
 ![image](https://github.com/user-attachments/assets/93caf0e1-2439-41a1-839a-36d0e1f744a2)
 ![image](https://github.com/user-attachments/assets/b983a3b0-4ee7-409b-a3ce-23791a5037ad)
 
+## Tech Stack
+
+Java 21, Spring Boot, Spring Data JPA, H2 Database, Gradle
+
 <details>
 
 <summary>
